@@ -1,7 +1,9 @@
-﻿@model IEnumerable<DeTodito.Models.Producto>
+﻿@model IEnumerable<DeTodito.Models.ProductoCarrito>
 
 @{
     ViewData["Title"] = "Carrito";
+    double subTotal = 0;
+    double total = 0;
 }
 
 <h1>Carrito</h1>
@@ -20,6 +22,10 @@
                 <th>
                     @Html.DisplayNameFor(model => model.Precio)
                 </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Cantidad)
+                </th>
+                <th>Sub Total</th>
                 <th></th>
             </tr>
         </thead>
@@ -31,10 +37,34 @@
                         @Html.DisplayFor(modelItem => item.Nombre)
                     </td>
                     <td>
-                        <img src="@item.RutaImagen" class="rounded-circle" height="50px"/>
+                        <img src="@item.Imagen" class="rounded-circle" height="50px" />
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.Precio)
+                        $@Html.DisplayFor(modelItem => item.Precio)
+                    </td>
+                    <td>
+                        <form method="post">
+                            <input class="d-none" name="IdProducto" value="@item.IdProducto" />
+                            <input class="d-none" name="Nombre" value="@item.Nombre" />
+                            <input class="d-none" name="Precio" value="@item.Precio" />
+                            <input class="d-none" name="Imagen" value="@item.Imagen" />
+                            <div class="row">
+                                <div class="col-6">
+                                    <input id="Cantidad" class="form-control" type="number" name="Cantidad" value=@item.Cantidad />
+                                </div>
+                                <div class="col-6">
+                                    <button class="btn btn-success" asp-action="Carrito" asp-controller="Home">AC</button>
+                                </div>                                            
+                            </div>
+                        </form>
+                    </td>
+                    <td>
+
+                        @{
+                            subTotal = item.Precio * item.Cantidad;
+                            total += item.Precio * item.Cantidad;
+                        }
+                        $@subTotal
                     </td>
                     <td>
                         <a class="btn btn-outline-danger" asp-action="Carrito" asp-controller="Home" asp-route-idproducto="@item.IdProducto">
@@ -43,20 +73,34 @@
                     </td>
                 </tr>
             }
+            <tr>
+                <td>Precito Total</td>
+                <td>$@total</td>
+            </tr>
         </tbody>
     </table>
-
-    <a asp-action="Pedidos" asp-controller="Home">
-        Realizar pedido
-    </a>
+    @if (User.Identity.IsAuthenticated)
+    {
+        <a class="btn btn-success" asp-action="Pedidos" asp-controller="Home">
+            Realizar pedido
+        </a>      
+        @*<button class="btn btn-success" asp-action="Pedidos" asp-controller="Home">Realizar Pedido</button>*@
+    }
+                else
+                {
+                    <a class="btn btn-primary" asp-area="Identity" asp-page="/Account/Login">Realizar Pedido</a>
+                }
 }
 else
 {
-<div class="jumbotron jumbotron-fluid">
-    <div class="container">
-        <h1 class="display-4">Tu Carrito está Vacío :(</h1>
-        <p class="lead">Por Favor regresa a buscar tus productos para cargarlo</p>
-        <a class="btn btn-warning" asp-action="Index" asp-controller="Home">Atrás</a>
+<div class="d-flex justify-content-center align-items-center">
+    <div class="jumbotron jumbotron-fluid">
+        <div class="container">
+            <a href="https://imgbb.com/"><img src="https://i.ibb.co/fCgDDHF/carritovacio.png" alt="carritovacio" border="0"></a>
+            <h1 class="display-4">Tu Carrito está Vacío :(</h1>
+            <p class="lead">Por Favor regresa a buscar tus productos para cargarlo</p>
+            <a class="btn btn-warning" asp-action="Index" asp-controller="Home">Atrás</a>
+        </div>
     </div>
 </div>
 }

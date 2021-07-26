@@ -8,30 +8,41 @@
     {
         clase = "disabled";
     }
+
 }
 
 
-<div class="text-center">
+<div class="text-center container">
     <h1 class="display-4">DeTodito</h1>
     <p>Tu almacén del Barrio.</p>
 
     <div class="row">
         @foreach (var producto in Model)
         {
-            <div class="card col-3" style="width: 18rem;">
+            <div class="card col-12 col-sm-6 col-md-4 col-lg-3" style="width: 18rem;">
                 <img src="@producto.RutaImagen" class="card-img-top" alt="...">
                 <div class="card-body">
                     <h5 class="card-title">@producto.Nombre</h5>
                     <p class="card-text">$@producto.Precio</p>
-                    <a asp-controller="Producto" asp-action="Details" asp-route-id="@producto.IdProducto" class="btn btn-primary">Ver Más</a>
-                    @if (carrito != null && carrito.Contains(producto.IdProducto))
-                    {
-                        <button disabled class="btn btn-outline-danger disabled">En carrito</button>
-                    }
-                    else
-                    {
-                        <a asp-action="Index" asp-controller="Home" asp-route-idproducto="@producto.IdProducto" class="btn btn-success @clase"><i class="fas fa-cart-plus"></i></a>
-                    }
+                    <form method="post">
+                        <input type="text" class="d-none" name="idproducto" value="@producto.IdProducto" />
+                        <div class="row pb-2">
+                            <div class="col-6 offset-3">
+                                <input class="form-control" type="number" name="cantidad" value="1" />
+                            </div>
+                        </div>
+                        <a asp-controller="Producto" asp-action="Details" asp-route-id="@producto.IdProducto" class="btn btn-primary">Ver Más</a>
+                        @if (carrito != null && carrito.Contains(producto.IdProducto))
+                        {
+                            <button disabled class="btn btn-outline-danger disabled">En carrito</button>
+                        }
+                        else
+                        {
+                            @*<a asp-action="Index" asp-controller="Home" asp-route-idproducto="@producto.IdProducto" class="btn btn-success @clase"><i class="fas fa-cart-plus"></i></a>*@
+                            <button asp-action="Index" asp-controller="Home" class="btn btn-success @clase"><i class="fas fa-cart-plus"></i></button>
+                        }
+                    </form>
+                    
                 </div>
             </div>
         }

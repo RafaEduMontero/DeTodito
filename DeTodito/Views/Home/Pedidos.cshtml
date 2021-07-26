@@ -1,9 +1,9 @@
-﻿@model IEnumerable<DeTodito.Models.Producto>
+﻿@model IEnumerable<DeTodito.Models.ProductoCarrito>
 
 @{
     ViewData["Title"] = "Pedidos";
-    var preferencia = ViewBag.Preferencia;
-    double precio = 0;
+    double subTotal = 0;
+    double total = 0;
 }
 
 <h1>Pedidos</h1>
@@ -15,8 +15,15 @@
                 @Html.DisplayNameFor(model => model.Nombre)
             </th>
             <th>
+                Imagen
+            </th>
+            <th>
                 @Html.DisplayNameFor(model => model.Precio)
             </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Cantidad)
+            </th>
+            <th>Sub Total</th>
         </tr>
     </thead>
     <tbody>
@@ -27,18 +34,36 @@
                     @Html.DisplayFor(modelItem => item.Nombre)
                 </td>
                 <td>
-                    $@Html.DisplayFor(modelItem => item.Precio) 
+                    <img src="@item.Imagen" class="rounded-circle" height="50px" />
+                </td>
+                <td>
+                    $@Html.DisplayFor(modelItem => item.Precio)
+                </td>
+                <td>
+                    <input id="Cantidad" class="form-control" type="text" value="@item.Cantidad" disabled/>
+                </td>
+                <td>
+
                     @{
-                        precio += item.Precio;
+                        subTotal = item.Precio * item.Cantidad;
+                        total += item.Precio * item.Cantidad;
                     }
+                    $@subTotal
                 </td>
             </tr>
         }
         <tr>
-            <td><b>Precio total:</b></td>
-            <td>$@precio</td>
+            <td>Precito Total</td>
+            <td>$@total</td>
         </tr>
     </tbody>
-    
 </table>
 
+<div class="row">
+    <div class="col-12 col-md-6 mb-2">
+        <label class="form-control">Ingrese Domicilio de Entrega</label>
+        <input class="form-control" type="text" />
+    </div>
+</div>
+
+<a href="@ViewBag.Preferencia" class="btn btn-success">Pagar con Mercado Pago</a>

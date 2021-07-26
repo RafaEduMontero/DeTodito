@@ -30,7 +30,7 @@ namespace DeTodito.Areas.Identity.Pages.Account
 
         public class InputModel
         {
-            [Required]
+            [Required(ErrorMessage ="El email es Requerido")]
             [EmailAddress]
             public string Email { get; set; }
         }
