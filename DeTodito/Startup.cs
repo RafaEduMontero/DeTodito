@@ -97,7 +97,7 @@ namespace DeTodito
             {
                 roleResult = await RoleManager.CreateAsync(new IdentityRole("Admin"));
             }
-            IdentityUser user = await UserManager.FindByEmailAsync("rafaedumontero@gmail.com");
+            IdentityUser user = await UserManager.FindByEmailAsync("email del usuario admin");
             var User = new IdentityUser();
             await UserManager.AddToRoleAsync(user, "Admin");
         }
