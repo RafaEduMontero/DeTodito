@@ -211,43 +211,6 @@ namespace DeTodito.Controllers
             HttpContext.Session.Remove("DOMICILIO");
             return View();
         }
-
-        //private static void GetItem(int id)
-        //{
-        //    var url = $"http://localhost:8080/item/{id}";
-        //    var request = (HttpWebRequest)WebRequest.Create(url);
-        //    request.Method = "GET";
-        //    request.ContentType = "application/json";
-        //    request.Accept = "application/json";
-        //    try
-        //    {
-        //        using (WebResponse response = request.GetResponse())
-        //        {
-        //            using (Stream strReader = response.GetResponseStream())
-        //            {
-        //                if (strReader == null) return;
-        //                using (StreamReader objReader = new StreamReader(strReader))
-        //                {
-        //                    string responseBody = objReader.ReadToEnd();
-        //                    // Do something with responseBody
-        //                    Console.WriteLine(responseBody);
-        //                }
-        //            }
-        //        }
-        //    }
-        //    catch (WebException ex)
-        //    {
-        //        // Handle error
-        //    }
-        //}
-        ////[HttpPost]
-        ////public IActionResult Retorno(PaymentOrderRequest p)
-        ////{
-        ////    string ejemplo = HttpContext.Request.Path;
-        ////    Console.WriteLine(ejemplo);
-        ////    ViewBag.Ejemplo = ejemplo;
-        ////    return View();
-        ////}
     }
 }
 
