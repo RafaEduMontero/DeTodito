@@ -1,0 +1,97 @@
+﻿@model ICollection<Pedido>
+
+
+@{
+
+    ViewData["Title"] = "DespachoPedidos";
+    var pedidos = Model;
+    bool presionado = false;
+    string bg = "";
+}
+
+<h1>Mis Pedidos</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Domicilio
+            </th>
+            <th>Detalle</th>
+            <th>
+                Estado Envío
+            </th>
+            <th>
+                Productos Envío
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in pedidos)
+        {
+            var id = "id" + item.Id.ToString();
+            @if (item.EstadoEnvio == "En Camino")
+            {
+                bg = "warning";
+            }
+            else
+            {
+                if (item.EstadoEnvio == "Entregado")
+                {
+                    bg = "success";
+                }
+                else
+                {
+                    bg = "danger";
+                }
+            }
+            <tr class="border border-dark">
+                <td>@item.Domicilio</td>
+                <td>@item.DetalleEnvio</td>
+                <td class="bg-@bg text-white text-center">@item.EstadoEnvio</td>
+                <td>
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#@id">
+                        Productos
+                    </button>
+
+                    <div class="modal fade" id="@id" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">Productosdel Pedido</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th>Producto</th>
+                                                <th>Cantidad</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var p in item.Productos)
+                                            {
+                                                <tr>
+                                                    <td>@p.Nombre</td>
+                                                    <td>@p.Cantidad</td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<!-- Modal -->

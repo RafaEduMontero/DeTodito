@@ -4,6 +4,7 @@
     ViewData["Title"] = "Pedidos";
     double subTotal = 0;
     double total = 0;
+    string preferencia = @ViewBag.Preferencia;
 }
 
 <h1>Pedidos</h1>
@@ -60,10 +61,19 @@
 </table>
 
 <div class="row">
-    <div class="col-12 col-md-6 mb-2">
-        <label class="form-control">Ingrese Domicilio de Entrega</label>
-        <input class="form-control" type="text" />
+    <div class="col-6">
+        <form method="post">
+            <div class="col-12 mb-2">
+                <label class="form-control">Domicilio de Entrega</label>
+                <input class="form-control" name="domicilio" type="text" />
+                <label class="form-control">Detalle de Entrega</label>
+                <input class="form-control" name="detalleEnvio" type="text" placeholder="Entre calles, Dto N°, Portero N°, Etc..." />
+                <input class="d-none" name="preferencia" type="text" value="@preferencia" />
+            </div>
+            <div class="col-6">
+                <button asp-action="Pedidos" asp-controller="Home" class="btn btn-success">Pagar con Mercado Pago</button>
+            </div>
+        </form>
     </div>
 </div>
 
-<a href="@ViewBag.Preferencia" class="btn btn-success">Pagar con Mercado Pago</a>

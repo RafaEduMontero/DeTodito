@@ -14,5 +14,8 @@ namespace DeTodito.Data
         {
         }
         public DbSet<DeTodito.Models.Producto> Producto { get; set; }
+        public DbSet<Pedido> Pedidos { get; set; }
+
+        public DbSet<ProductoCarrito> ProductoCarrito { get; set; }
     }
 }

@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using DeTodito.Extensions;
+using DeTodito.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -74,6 +76,12 @@ namespace DeTodito.Areas.Identity.Pages.Account
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
+                var inicioSesion = new InicioSesion { 
+                    Email = Input.Email,
+                    Password = Input.Password,
+                    RepitPassword = Input.Password
+                };
+                HttpContext.Session.SetObject("INICIOSESION", inicioSesion);
                 var user = new IdentityUser { UserName = Input.Email, Email = Input.Email };
                 var result = await _userManager.CreateAsync(user, Input.Password);
                 if (result.Succeeded)

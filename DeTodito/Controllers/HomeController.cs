@@ -15,8 +15,9 @@ using MercadoPago.Config;
 using MercadoPago.Resource.Payment;
 using MercadoPago.Resource.Preference;
 using MercadoPago.Client.Preference;
-
-
+using System.Net;
+using System.IO;
+using Microsoft.AspNetCore.Identity;
 
 namespace DeTodito.Controllers
 {
@@ -24,10 +25,11 @@ namespace DeTodito.Controllers
     {
 
         private readonly ApplicationDbContext _context;
-
-        public HomeController(ApplicationDbContext context)
+        private readonly UserManager<IdentityUser> _userManager;
+        public HomeController(ApplicationDbContext context, UserManager<IdentityUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         public async Task<IActionResult> Index(int? idproducto, string? cantidad)
@@ -109,17 +111,16 @@ namespace DeTodito.Controllers
         {
             List<ProductoCarrito> carrito = HttpContext.Session.GetObject<List<ProductoCarrito>>("CARRITO1");
 
-            MercadoPagoConfig.AccessToken = "Tu token MP";
+            MercadoPagoConfig.AccessToken = "APP_USR-6623451607855904-111502-1f258ab308efb0fb26345a2912a3cfa5-672708410";
             List<PreferenceItemRequest> Items1 = new List<PreferenceItemRequest>();
-            foreach (var producto in carrito)
+            foreach (var p in carrito)
             {
                 var item = new PreferenceItemRequest
                 {
-                    Title = producto.Nombre,
-                    Quantity = producto.Cantidad,
+                    Title = p.Nombre,
+                    Quantity = p.Cantidad,
                     CurrencyId = "ARS",
-                    UnitPrice = decimal.Parse(producto.Precio.ToString())
-
+                    UnitPrice = decimal.Parse(p.Precio.ToString())
                 };
                 Items1.Add(item);
             }
@@ -140,17 +141,46 @@ namespace DeTodito.Controllers
             var client = new PreferenceClient();
             var preference = await client.CreateAsync(request);
             ViewBag.Preferencia = preference.InitPoint;
-
-
-            HttpContext.Session.Remove("CARRITO");
-            HttpContext.Session.Remove("CARRITO1");
             return View(carrito);
         }
 
-        [Authorize(Roles = "Admin")]
-        public IActionResult Privacy()
+        [HttpPost]
+        public IActionResult Pedidos(string preferencia,string domicilio,string detalleEnvio)
         {
-            return View();
+            var envio = new Envio
+            {
+                Domicilio = domicilio,
+                DetalleDomicilio = detalleEnvio
+            };
+            HttpContext.Session.SetObject("DOMICILIO", envio);
+            return Redirect(preferencia);
+        }
+
+        public async Task<IActionResult> DespachoPedidos()
+        {
+            return View(await _context.Pedidos.Include(p => p.Productos).ToListAsync());
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DespachoPedidos(int idpedido, string estado)
+        {
+            if(estado != "nada")
+            {
+                var originalPedido = await _context.Pedidos.FindAsync(idpedido);
+                originalPedido.EstadoEnvio = estado;
+                _context.Update(originalPedido);
+                await _context.SaveChangesAsync();
+            }
+
+            return View(await _context.Pedidos.Include(p => p.Productos).ToListAsync());
+        }
+
+        public async Task<IActionResult> PedidosCliente()
+        {
+            var user = _userManager.FindByNameAsync(User.Identity.Name).Result;
+            var pedidos = await _context.Pedidos.Include(p => p.Productos).ToListAsync();
+            var pedidosCliente = pedidos.Where(p => p.IdCliente == user.Id).ToList();
+            return View(pedidosCliente);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
@@ -159,18 +189,65 @@ namespace DeTodito.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }    
         
+        [HttpGet]
         public IActionResult Retorno()
         {
+            var user = _userManager.FindByNameAsync(User.Identity.Name).Result;
+            List<ProductoCarrito> carrito = HttpContext.Session.GetObject<List<ProductoCarrito>>("CARRITO1");
+            var envio = HttpContext.Session.GetObject<Envio>("DOMICILIO");
+            var pedido = new Pedido
+            {
+                Domicilio = envio.Domicilio,
+                DetalleEnvio = envio.DetalleDomicilio,
+                EstadoEnvio = "No Enviado",
+                Productos = carrito,
+                IdCliente = user.Id
+            };
+
+            _context.Add(pedido);
+            _context.SaveChanges();
+            HttpContext.Session.Remove("CARRITO");
+            HttpContext.Session.Remove("CARRITO1");
+            HttpContext.Session.Remove("DOMICILIO");
             return View();
         }
-        [HttpPost]
-        public IActionResult Retorno(string? url)
-        {
-            string ejemplo = HttpContext.Request.Path;
-            Console.WriteLine(ejemplo);
-            ViewBag.Ejemplo = ejemplo;
-            return View(url);
-        }
+
+        //private static void GetItem(int id)
+        //{
+        //    var url = $"http://localhost:8080/item/{id}";
+        //    var request = (HttpWebRequest)WebRequest.Create(url);
+        //    request.Method = "GET";
+        //    request.ContentType = "application/json";
+        //    request.Accept = "application/json";
+        //    try
+        //    {
+        //        using (WebResponse response = request.GetResponse())
+        //        {
+        //            using (Stream strReader = response.GetResponseStream())
+        //            {
+        //                if (strReader == null) return;
+        //                using (StreamReader objReader = new StreamReader(strReader))
+        //                {
+        //                    string responseBody = objReader.ReadToEnd();
+        //                    // Do something with responseBody
+        //                    Console.WriteLine(responseBody);
+        //                }
+        //            }
+        //        }
+        //    }
+        //    catch (WebException ex)
+        //    {
+        //        // Handle error
+        //    }
+        //}
+        ////[HttpPost]
+        ////public IActionResult Retorno(PaymentOrderRequest p)
+        ////{
+        ////    string ejemplo = HttpContext.Request.Path;
+        ////    Console.WriteLine(ejemplo);
+        ////    ViewBag.Ejemplo = ejemplo;
+        ////    return View();
+        ////}
     }
 }
 
