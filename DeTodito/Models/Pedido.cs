@@ -13,6 +13,7 @@ namespace DeTodito.Models
         public string Domicilio { get; set; }
         public string DetalleEnvio { get; set; }
         public string EstadoEnvio { get; set; }
+        public DateTime FechaHora { get; set; }
         public ICollection<ProductoCarrito> Productos { get; set; }
         public string IdCliente { get; set; }
     }

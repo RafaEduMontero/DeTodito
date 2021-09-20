@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DeTodito.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20210920195340_first")]
+    [Migration("20210920225111_first")]
     partial class first
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -36,6 +36,9 @@ namespace DeTodito.Migrations
 
                     b.Property<string>("EstadoEnvio")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("FechaHora")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("IdCliente")
                         .HasColumnType("nvarchar(max)");

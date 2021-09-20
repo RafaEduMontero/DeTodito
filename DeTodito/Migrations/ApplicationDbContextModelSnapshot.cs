@@ -35,6 +35,9 @@ namespace DeTodito.Migrations
                     b.Property<string>("EstadoEnvio")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime>("FechaHora")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("IdCliente")
                         .HasColumnType("nvarchar(max)");
 

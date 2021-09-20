@@ -55,6 +55,7 @@ namespace DeTodito.Migrations
                     Domicilio = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     DetalleEnvio = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     EstadoEnvio = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    FechaHora = table.Column<DateTime>(type: "datetime2", nullable: false),
                     IdCliente = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
